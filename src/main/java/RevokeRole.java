@@ -8,12 +8,12 @@
  *
  * @author phmhngn
  */
-public class GrantRole extends javax.swing.JFrame {
+public class RevokeRole extends javax.swing.JFrame {
 
     /**
      * Creates new form GrantPriv
      */
-    public GrantRole() {
+    public RevokeRole() {
         initComponents();
     }
 
@@ -27,20 +27,20 @@ public class GrantRole extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jLabel1 = new javax.swing.JLabel();
+        obj = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         txtObject = new javax.swing.JTextField();
         txtRole = new javax.swing.JTextField();
         btnCommit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Grant priviledge to User/Role");
+        setTitle("Revoke role from an User");
 
-        jLabel1.setText("Role or User");
+        obj.setText("User");
 
-        jLabel3.setText("Granted Role");
+        jLabel3.setText("Role");
 
-        btnCommit.setText("COMMIT");
+        btnCommit.setText("REVOKE");
         btnCommit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCommitActionPerformed(evt);
@@ -52,19 +52,15 @@ public class GrantRole extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3))
-                        .addGap(22, 22, 22)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtRole, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtObject, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(btnCommit, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(obj)
+                    .addComponent(jLabel3))
+                .addGap(22, 22, 22)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCommit, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtRole, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtObject, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -72,7 +68,7 @@ public class GrantRole extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(obj)
                     .addComponent(txtObject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -91,7 +87,7 @@ public class GrantRole extends javax.swing.JFrame {
         String obj = txtObject.getText();
         String role = txtRole.getText();
 
-        TabPrivModify.grantRole(obj, role);
+        TabPrivModify.revokeRole(obj, role);
         txtObject.setText("");
         txtRole.setText("");
         
@@ -137,8 +133,8 @@ public class GrantRole extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCommit;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel obj;
     private javax.swing.JTextField txtObject;
     private javax.swing.JTextField txtRole;
     // End of variables declaration//GEN-END:variables

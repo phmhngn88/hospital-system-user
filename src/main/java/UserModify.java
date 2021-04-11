@@ -1,4 +1,5 @@
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import oracle.jdbc.OracleCallableStatement;
+import oracle.jdbc.OracleTypes;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,16 +26,21 @@ public class UserModify {
         List<User> userList = new ArrayList<>();
         // TODO Auto-generated method stub
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			Connection connection = DriverManager.getConnection(dbURL, username, password);
 			System.out.println("Connected");
-			String sql = "SELECT USERNAME, USER_ID, CREATED FROM all_users ORDER BY created DESC";
-			Statement statement = connection.createStatement();
-			
-			ResultSet resultSet = statement.executeQuery(sql);
+//			String sql = "SELECT USERNAME, USER_ID, CREATED FROM all_users ORDER BY created DESC";
+//			Statement statement = connection.createStatement();
+//			
+//			ResultSet resultSet = statement.executeQuery(sql);
+                        
+                        CallableStatement stmt = connection.prepareCall("begin show_system_user(?); END;");
+                        stmt.registerOutParameter(1, OracleTypes.CURSOR); //REF CURSOR
+                        stmt.execute();
+                        ResultSet resultSet = ((OracleCallableStatement)stmt).getCursor(1);
 
 			while (resultSet.next()) {
 				User line = new User(resultSet.getString(1),
@@ -56,8 +64,8 @@ public class UserModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -89,8 +97,8 @@ public class UserModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -122,8 +130,8 @@ public class UserModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);

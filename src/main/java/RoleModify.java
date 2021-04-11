@@ -1,4 +1,5 @@
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import oracle.jdbc.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -24,15 +26,15 @@ public class RoleModify {
         // TODO Auto-generated method stub
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
 		String username = "hospitalDBA";
-		String password = "";
+		String password = "021299";
 		
 		try {
 			Connection connection = DriverManager.getConnection(dbURL, username, password);
 			System.out.println("Connected");
-			String sql = "SELECT DR.ROLE, DR.ROLE_ID, DR.PASSWORD_REQUIRED FROM DBA_ROLES DR ORDER BY DR.ROLE_ID DESC";
-			Statement statement = connection.createStatement();
-			
-			ResultSet resultSet = statement.executeQuery(sql);
+			CallableStatement stmt = connection.prepareCall("begin show_system_role(?); END;");
+                        stmt.registerOutParameter(1, OracleTypes.CURSOR); //REF CURSOR
+                        stmt.execute();
+                        ResultSet resultSet = ((OracleCallableStatement)stmt).getCursor(1);
 
 			while (resultSet.next()) {
 				Role line = new Role(resultSet.getString(1),
@@ -57,7 +59,7 @@ public class RoleModify {
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
 		String username = "hospitalDBA";
-		String password = "";
+		String password = "021299";
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -94,7 +96,7 @@ public class RoleModify {
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
 		String username = "hospitalDBA";
-		String password = yourpassword;
+		String password = "021299";
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -127,7 +129,7 @@ public class RoleModify {
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
 		String username = "hospitalDBA";
-		String password = yourpassword;
+		String password = "021299";
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);

@@ -6,6 +6,8 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import oracle.jdbc.*;
+
 /**
  *
  * @author phmhngn
@@ -15,18 +17,25 @@ public class TabPrivModify {
         List<DbaTabPrivs> resultTab = new ArrayList<>();
         // TODO Auto-generated method stub
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			Connection connection = DriverManager.getConnection(dbURL, username, password);
 			System.out.println("Connected");
-			String sql = "SELECT * FROM USER_TAB_PRIVS";
-			Statement statement = connection.createStatement();
-			
-			ResultSet resultSet = statement.executeQuery(sql);
+			//String sql = "SELECT * FROM USER_TAB_PRIVS";
+
+//			Statement statement = connection.createStatement();
+//			
+//			ResultSet resultSet = statement.executeQuery(sql);
 //			statement.setString(1, "myrole");
 //			statement.setString(2, "NV001");
+                        String sql = "exec view_user_priviledge";
+                        CallableStatement stmt = connection.prepareCall("begin view_user_priviledge(?); END;");
+                        stmt.registerOutParameter(1, OracleTypes.CURSOR); //REF CURSOR
+                        stmt.execute();
+                        ResultSet resultSet = ((OracleCallableStatement)stmt).getCursor(1);
+                        
 			while (resultSet.next()) {
 				DbaTabPrivs line = new DbaTabPrivs(resultSet.getString(1),
                                     resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),
@@ -46,20 +55,41 @@ public class TabPrivModify {
         return resultTab;
     }
     
-    public static List<DbaTabPrivs> find(String objName) {
-        List<DbaTabPrivs> resultTab = new ArrayList<>();
+    public static boolean isConnected() {
         // TODO Auto-generated method stub
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			Connection connection = DriverManager.getConnection(dbURL, username, password);
 			System.out.println("Connected");
-			String sql = "SELECT * FROM USER_TAB_PRIVS";
-			Statement statement = connection.createStatement();
+			connection.close();
 			
-			ResultSet resultSet = statement.executeQuery(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("eo dc Biatch");
+			e.printStackTrace();
+                        return false;
+		}
+        return true;
+
+    }
+    
+    public static List<DbaTabPrivs> find(String objName) {
+        List<DbaTabPrivs> resultTab = new ArrayList<>();
+        // TODO Auto-generated method stub
+		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
+		String username = Login.username;
+		String password = Login.password;
+		
+		try {
+			Connection connection = DriverManager.getConnection(dbURL, username, password);
+			System.out.println("Connected");
+			CallableStatement stmt = connection.prepareCall("begin view_user_priviledge(?); END;");
+                        stmt.registerOutParameter(1, OracleTypes.CURSOR); //REF CURSOR
+                        stmt.execute();
+                        ResultSet resultSet = ((OracleCallableStatement)stmt).getCursor(1);
 //			statement.setString(1, "myrole");
 //			statement.setString(2, "NV001");
 			while (resultSet.next()) {
@@ -88,8 +118,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -98,16 +128,13 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "Grant SELECT ON " + table + " to " + obj;
-                        if (grantOption) {
-                            sql += " with grant option";
-                        }
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin grant_priviledge(?, ?, ?, ?, ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, table);
+                        stmt.setString(3, "SELECT");
+                        stmt.setString(4, grantOption ? "TRUE" : "FALSE");
+                        stmt.setString(5, "ALL COLUMNS");
+                        stmt.execute();
 
 			
 			connection.close();
@@ -124,8 +151,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -134,16 +161,13 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "Grant DELETE ON " + table + " to " + obj;
-                        if (grantOption) {
-                            sql += " with grant option";
-                        }
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin grant_priviledge(?, ?, ?, ?, ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, table);
+                        stmt.setString(3, "DELETE");
+                        stmt.setString(4, grantOption ? "TRUE" : "FALSE");
+                        stmt.setString(5, "ALL COLUMNS");
+                        stmt.execute();
 
 			
 			connection.close();
@@ -160,8 +184,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -170,16 +194,13 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "Grant INSERT ("+ column +") ON " + table + " to " + obj;
-                        if (grantOption) {
-                            sql += " with grant option";
-                        }
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin grant_priviledge(?, ?, ?, ?, ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, table);
+                        stmt.setString(3, "INSERT");
+                        stmt.setString(4, grantOption ? "TRUE" : "FALSE");
+                        stmt.setString(5, column);
+                        stmt.execute();
 
 			
 			connection.close();
@@ -196,8 +217,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -206,16 +227,13 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "Grant UPDATE ("+ column +") ON " + table + " to " + obj;
-                        if (grantOption) {
-                            sql += " with grant option";
-                        }
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin grant_priviledge(?, ?, ?, ? , ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, table);
+                        stmt.setString(3, "UPDATE");
+                        stmt.setString(4, grantOption ? "TRUE" : "FALSE");
+                        stmt.setString(5, column);
+                        stmt.execute();
 
 			
 			connection.close();
@@ -232,8 +250,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -242,14 +260,11 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "REVOKE SELECT ON " + table + " FROM " + obj;
-                        
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin revoke_priviledge(?, ?, ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, table);
+                        stmt.setString(3, "SELECT");
+                        stmt.execute();
 
 			
 			connection.close();
@@ -266,8 +281,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -276,14 +291,11 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "REVOKE DELETE ON " + table + " FROM " + obj;
-                        
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin revoke_priviledge(?, ?, ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, table);
+                        stmt.setString(3, "DELETE");
+                        stmt.execute();
 
 			
 			connection.close();
@@ -300,8 +312,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -310,14 +322,11 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "REVOKE INSERT ON " + table + " FROM " + obj;
-                        
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin revoke_priviledge(?, ?, ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, table);
+                        stmt.setString(3, "INSERT");
+                        stmt.execute();
 
 			
 			connection.close();
@@ -334,8 +343,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -344,14 +353,11 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "REVOKE UPDATE ON " + table + " FROM " + obj;
-                        
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin revoke_priviledge(?, ?, ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, table);
+                        stmt.setString(3, "UPDATE");
+                        stmt.execute();
 
 			
 			connection.close();
@@ -368,8 +374,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
@@ -378,14 +384,10 @@ public class TabPrivModify {
                         Statement setMode = connection.createStatement();
                         setMode.executeQuery("alter session set \"_ORACLE_SCRIPT\"=true");
                         
-			String sql = "REVOKE " + role + " FROM " + obj;
-                        
-			statement = connection.prepareCall(sql);
-			
-//                        statement.setString(1, userName);
-//                        statement.setString(2, newPassword);
-			
-                        statement.execute();
+			CallableStatement stmt = connection.prepareCall("begin revoke_role(?, ?); END;");
+                        stmt.setString(1, obj);
+                        stmt.setString(2, role);
+                        stmt.execute();
 
 			
 			connection.close();
@@ -402,8 +404,8 @@ public class TabPrivModify {
                 Connection connection = null;
                 PreparedStatement statement = null;
 		String dbURL = "jdbc:oracle:thin:@localhost:1521:xe";
-		String username = "hospitalDBA";
-		String password = yourpassword;
+		String username = Login.username;
+		String password = Login.password;
 		
 		try {
 			connection = DriverManager.getConnection(dbURL, username, password);
