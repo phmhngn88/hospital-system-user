@@ -93,7 +93,7 @@ public class TabPrivModify {
 //			statement.setString(1, "myrole");
 //			statement.setString(2, "NV001");
 			while (resultSet.next()) {
-                                if (objName.equals(resultSet.getString(1))) {
+                                if (objName.toUpperCase().equals(resultSet.getString(1).toUpperCase())) {
                                     DbaTabPrivs line = new DbaTabPrivs(resultSet.getString(1),
                                         resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),
                                         resultSet.getString(5),resultSet.getString(6),resultSet.getString(7),

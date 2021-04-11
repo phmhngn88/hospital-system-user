@@ -91,7 +91,7 @@ public class RevokeRole extends javax.swing.JFrame {
         txtObject.setText("");
         txtRole.setText("");
         
-        DBAFrame.showPrivs();
+        DBAFrame.showUserRoles(obj);
         
     }//GEN-LAST:event_btnCommitActionPerformed
 

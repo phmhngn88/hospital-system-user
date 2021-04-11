@@ -16,6 +16,7 @@ public class DBAFrame extends javax.swing.JFrame {
     static DefaultTableModel tableModel;
     static DefaultTableModel tableModelUser1;
     static DefaultTableModel tableModelRole1;
+    static DefaultTableModel tableModelUserRole1;
     /**
      * Creates new form DBAFrame
      */
@@ -25,9 +26,11 @@ public class DBAFrame extends javax.swing.JFrame {
         tableModel = (DefaultTableModel) TblTabPrivs.getModel();
         tableModelUser1 = (DefaultTableModel) tblUser1.getModel();
         tableModelRole1 = (DefaultTableModel) tblRole1.getModel();
+        tableModelUserRole1 = (DefaultTableModel) tblUserRole.getModel();
         showPrivs();
         showUsers();
         showRoles();
+        showUserRoles();
     }
     
     public static void showPrivs() {
@@ -73,6 +76,24 @@ public class DBAFrame extends javax.swing.JFrame {
                 dtp.getPASSWORD_REQUIRED()});
         });
     }
+    
+    public static void showUserRoles() {
+        List<UserRole> roleList = UserRoleModify.findAll();
+        tableModelUserRole1.setRowCount(0);
+        
+        roleList.forEach(dtp -> {
+            tableModelUserRole1.addRow(new Object[] {dtp.getGRANTEE(), dtp.getGRANTED_ROLE()});
+        });
+    }
+    
+    public static void showUserRoles(String obj) {
+        List<UserRole> roleList = UserRoleModify.find(obj);
+        tableModelUserRole1.setRowCount(0);
+        
+        roleList.forEach(dtp -> {
+            tableModelUserRole1.addRow(new Object[] {dtp.getGRANTEE(), dtp.getGRANTED_ROLE()});
+        });
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -104,9 +125,13 @@ public class DBAFrame extends javax.swing.JFrame {
         TblTabPrivs = new javax.swing.JTable();
         btnGrantPriv = new javax.swing.JButton();
         btnRevokePriv = new javax.swing.JButton();
-        btnGrantRole = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tblUserRole = new javax.swing.JTable();
         btnRevokeRole = new javax.swing.JButton();
+        btnGrantRole = new javax.swing.JButton();
+        btnResetRole = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -122,6 +147,7 @@ public class DBAFrame extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTable1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Hospital Admin Toolkit");
 
         btnCreateUser.setText("Create User...");
         btnCreateUser.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -247,7 +273,7 @@ public class DBAFrame extends javax.swing.JFrame {
                                     .addComponent(btnDeleteRole, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(btnCreateRole, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(btnUpdateRole, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(189, Short.MAX_VALUE))))))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,24 +355,10 @@ public class DBAFrame extends javax.swing.JFrame {
             }
         });
 
-        btnGrantRole.setText("Grant Role to an User...");
-        btnGrantRole.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGrantRoleActionPerformed(evt);
-            }
-        });
-
         btnReset.setText("Reset");
         btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnResetActionPerformed(evt);
-            }
-        });
-
-        btnRevokeRole.setText("Revoke Role from an User...");
-        btnRevokeRole.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRevokeRoleActionPerformed(evt);
             }
         });
 
@@ -357,32 +369,24 @@ public class DBAFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 924, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 942, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnRevokeRole, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnGrantRole, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnGrantPriv, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnRevokePriv))
+                            .addComponent(btnRevokePriv)
+                            .addComponent(btnGrantPriv, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGrantPriv)
-                    .addComponent(btnGrantRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRevokePriv, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnRevokeRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(16, 16, 16)
+                .addComponent(btnGrantPriv)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRevokePriv, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -392,11 +396,107 @@ public class DBAFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Priviledges", jPanel2);
 
+        tblUserRole.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "GRANTEE", "GRANTED_ROLE"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane5.setViewportView(tblUserRole);
+
+        btnRevokeRole.setText("Revoke Role from an User...");
+        btnRevokeRole.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRevokeRoleActionPerformed(evt);
+            }
+        });
+
+        btnGrantRole.setText("Grant Role to an User...");
+        btnGrantRole.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGrantRoleActionPerformed(evt);
+            }
+        });
+
+        btnResetRole.setText("Reset");
+        btnResetRole.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetRoleActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 592, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnRevokeRole, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnGrantRole, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnResetRole, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(139, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnGrantRole, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnRevokeRole, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnResetRole)))
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Role", jPanel3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -477,6 +577,11 @@ public class DBAFrame extends javax.swing.JFrame {
         rr.setVisible(true);
     }//GEN-LAST:event_btnRevokeRoleActionPerformed
 
+    private void btnResetRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetRoleActionPerformed
+        // TODO add your handling code here:
+        showUserRoles();
+    }//GEN-LAST:event_btnResetRoleActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -520,6 +625,7 @@ public class DBAFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnGrantPriv;
     private javax.swing.JButton btnGrantRole;
     private javax.swing.JButton btnReset;
+    private javax.swing.JButton btnResetRole;
     private javax.swing.JButton btnRevokePriv;
     private javax.swing.JButton btnRevokeRole;
     private javax.swing.JButton btnUpdateRole;
@@ -528,14 +634,17 @@ public class DBAFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable tblRole1;
     private javax.swing.JTable tblUser1;
+    private javax.swing.JTable tblUserRole;
     // End of variables declaration//GEN-END:variables
 }
